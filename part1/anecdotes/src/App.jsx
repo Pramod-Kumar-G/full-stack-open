@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-const generateRamdomNumber = () => {
-    return Math.floor(Math.random() * 8)
+const generateRandomNumber = (max) => {
+    return Math.floor(Math.random() * max)
 }
 
 const App = () => {
@@ -16,12 +16,28 @@ const App = () => {
         'The only way to go fast, is to go well.'
     ]
 
-    const [selected, setSelected] = useState(generateRamdomNumber())
+    const [selected, setSelected] = useState(generateRandomNumber(0))
+    const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
 
+    console.log(votes)
+    const handleVote = () => {
+        let newVotes = [...votes]
+        newVotes[selected]++
+        setVotes(newVotes)
+    }
+    const handleNext = () => {
+        let randomNumber;
+        do {
+            randomNumber = generateRandomNumber(anecdotes.length)
+        } while (selected === randomNumber)
+        setSelected(randomNumber)
+    }
     return (
         <div>
             <div>{anecdotes[selected]}</div>
-            <button onClick={() => setSelected(generateRamdomNumber())}>Next Anecdote</button>
+            <div>has {votes[selected]} votes</div>
+            <button onClick={handleVote}>Vote</button>
+            <button onClick={handleNext}>Next Anecdote</button>
         </div>
     )
 }
