@@ -42,14 +42,25 @@ const App = () => {
     setSearchResults(filteredPersonsArray)
   }
 
+  const deleteNumber = (id) => {
+    const deletePerson = persons.find(person => person.id === id)
+    if (confirm(`Delete ${deletePerson.name} ?`)) {
+
+      personService.remove(id).then(returnedPerson => {
+        setPersons(persons.filter(person => person.id !== id))
+        setSearchResults(searchResults.filter(person => person.id !== id))
+      })
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
-      <Search handleSearch={handleSearch} searchResults={searchResults} />
+      <Search handleSearch={handleSearch} searchResults={searchResults} deleteNumber={deleteNumber} />
       <h2>Add a new</h2>
       <AddPerson handleSubmit={handleSubmit} newName={newName} newNumber={newNumber} setNewName={setNewName} setNewNumber={setNewNumber} />
       <h2>Numbers</h2>
-      <DisplayPersons persons={persons} />
+      <DisplayPersons persons={persons} deleteNumber={deleteNumber} />
     </div>
   )
 }
