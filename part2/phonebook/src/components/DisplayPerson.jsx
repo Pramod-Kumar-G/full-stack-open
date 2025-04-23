@@ -1,7 +1,7 @@
 const DisplayPerson = ({ person }) => {
-    return (
-        <div>{person.name} {person.phone}</div>
-    )
+  return (
+    <div>{person.name} {person.number}</div>
+  )
 }
 
 export default DisplayPerson
