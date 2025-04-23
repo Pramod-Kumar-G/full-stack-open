@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import AddPerson from './components/AddPerson'
+import Search from './components/Search'
+import DisplayPersons from './components/DisplayPersons'
 
 const App = () => {
     const [persons, setPersons] = useState([
@@ -10,8 +13,8 @@ const App = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const isPresent = persons.find((person) => person.name.toLowerCase() == newName.toLowerCase())
-        if (isPresent) {
+        const personExists = persons.find((person) => person.name.toLowerCase() == newName.toLowerCase())
+        if (personExists) {
             alert(`${newName} is already added to phonebook`)
             return;
         }
@@ -29,26 +32,15 @@ const App = () => {
         const filteredPersonsArray = persons.filter((person) => person.name.toLowerCase().includes(searchQuery.toLowerCase()))
         setSearchResults(filteredPersonsArray)
     }
-    console.log(persons)
 
     return (
         <div>
             <h2>Phonebook</h2>
-            <div>Filter shown with <input onChange={handleSearch} /></div>
-            <div>{searchResults.map(person => <div key={person.id}>{person.name} {person.phone}</div>)}</div>
-
+            <Search handleSearch={handleSearch} searchResults={searchResults} />
             <h2>Add a new</h2>
-            <form onSubmit={handleSubmit}>
-                <div>name: <input value={newName} onChange={(event) => setNewName(event.target.value)} /></div>
-                <div>number: <input value={newPhone} onChange={(event) => setNewPhone(event.target.value)} /></div>
-                <div>
-                    <button type="submit">add</button>
-                </div>
-            </form>
+            <AddPerson handleSubmit={handleSubmit} newName={newName} newPhone={newPhone} setNewName={setNewName} setNewPhone={setNewPhone} />
             <h2>Numbers</h2>
-            <div>
-                {persons.map((person) => <div key={person.id}>{person.name} {person.phone}</div>)}
-            </div>
+            <DisplayPersons persons={persons} />
         </div>
     )
 }
