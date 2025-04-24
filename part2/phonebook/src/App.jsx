@@ -2,14 +2,15 @@ import { useEffect, useState } from 'react'
 import AddPerson from './components/AddPerson'
 import Search from './components/Search'
 import DisplayPersons from './components/DisplayPersons'
-import axios from 'axios'
 import personService from "./services/persons"
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchResults, setSearchResults] = useState([])
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     personService.getAll().then(initialPersons => {
@@ -21,7 +22,13 @@ const App = () => {
   const updatePerson = (personExists) => {
     const updatedPerson = { ...personExists, number: newNumber }
     personService.update(updatedPerson.id, updatedPerson).then(returnedPerson => {
+      setMessage({ content: `Updated ${returnedPerson.name}'s number to ${returnedPerson.number}`, success: true })
+      setTimeout(() => { setMessage(null) }, 5000)
       setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
+    }).catch(error => {
+      setMessage({ content: `Information of ${newName} has already been removed from server`, success: false })
+      setTimeout(() => { setMessage(null) }, 5000)
+      setPersons(persons.filter(person => person.name !== newName))
     })
     setNewName("")
     setNewNumber("")
@@ -29,6 +36,8 @@ const App = () => {
   const createPerson = () => {
     const personObject = { name: newName, number: newNumber }
     personService.create(personObject).then(returnedPerson => {
+      setMessage({ content: `Added ${returnedPerson.name}`, success: true })
+      setTimeout(() => { setMessage(null) }, 5000)
       setPersons(persons.concat(returnedPerson))
       setNewName("")
       setNewNumber("")
@@ -74,6 +83,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Search handleSearch={handleSearch} searchResults={searchResults} deleteNumber={deleteNumber} />
       <h2>Add a new</h2>
       <AddPerson handleSubmit={handleSubmit} newName={newName} newNumber={newNumber} setNewName={setNewName} setNewNumber={setNewNumber} />
