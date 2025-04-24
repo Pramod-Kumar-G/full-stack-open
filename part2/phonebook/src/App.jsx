@@ -17,23 +17,41 @@ const App = () => {
     })
   }, [])
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const personExists = persons.find((person) => person.name.toLowerCase() == newName.toLowerCase())
-    if (personExists) {
-      alert(`${newName} is already added to phonebook`)
-      return;
-    }
-    if (newName.length === 0 || newNumber.length === 0) {
-      alert("Empty name or number provided. Please fill all the details.")
-      return;
-    }
+
+  const updatePerson = (personExists) => {
+    const updatedPerson = { ...personExists, number: newNumber }
+    personService.update(updatedPerson.id, updatedPerson).then(returnedPerson => {
+      setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
+    })
+    setNewName("")
+    setNewNumber("")
+  }
+  const createPerson = () => {
     const personObject = { name: newName, number: newNumber }
     personService.create(personObject).then(returnedPerson => {
       setPersons(persons.concat(returnedPerson))
       setNewName("")
       setNewNumber("")
     })
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (newName.length === 0 || newNumber.length === 0) {
+      alert("Empty name or number provided. Please fill all the details.")
+      return;
+    }
+    const personExists = persons.find((person) => person.name.toLowerCase() == newName.toLowerCase())
+    if (personExists) {
+      if (!confirm(`${personExists.name} is already added to phonebook, replace the old number with a new one?`)) {
+        setNewName("")
+        setNewNumber("")
+        return;
+      }
+      updatePerson(personExists)
+      return;
+    }
+    createPerson()
   }
 
   const handleSearch = (event) => {
