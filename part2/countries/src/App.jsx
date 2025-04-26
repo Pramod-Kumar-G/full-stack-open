@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import CountryDetail from "./components/CountryDetail"
 import CountryList from "./components/CountryList"
-import CountryService from "./services/countries"
+import countryService from "./services/countries"
 
 const App = () => {
   const [countries, setCountries] = useState([])
@@ -11,7 +11,7 @@ const App = () => {
 
 
   useEffect(() => {
-    CountryService.getAll()
+    countryService.getAll()
       .then(returnedCountries => setCountries(returnedCountries))
       .catch(error => { console.error("Error fetching countries: ", error) })
   }, [])
