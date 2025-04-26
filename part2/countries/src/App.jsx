@@ -1,4 +1,3 @@
-import axios from "axios"
 import { useEffect, useState } from "react"
 import CountryDetail from "./components/CountryDetail"
 import CountryList from "./components/CountryList"
@@ -54,7 +53,7 @@ const App = () => {
       <div>
         {message}
       </div>
-      <CountryList matchedCountries={matchedCountries} />
+      <CountryList matchedCountries={matchedCountries} setSelectedCountry={setSelectedCountry} />
       <CountryDetail selectedCountry={selectedCountry} />
     </div>
   )
