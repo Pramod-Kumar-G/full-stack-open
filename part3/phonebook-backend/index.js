@@ -65,6 +65,24 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
+app.put('/api/persons/:id', (request, response, next) => {
+  const { name, number } = request.body
+  Person.findById(request.params.id)
+    .then(person => {
+      if (!person) {
+        response.status(404).end()
+      }
+      else {
+        person.name = name
+        person.number = number
+        return person.save().then(savedPerson => {
+          response.send(savedPerson)
+        })
+      }
+    })
+    .catch(error => next(error))
+})
+
 const generateId = () => {
   return String(Math.ceil(Math.random() * 1000));
 }
