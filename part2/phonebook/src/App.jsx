@@ -42,6 +42,10 @@ const App = () => {
       setNewName("")
       setNewNumber("")
     })
+      .catch(error => {
+        setMessage({ content: error.response.data.error })
+        setTimeout(() => { setMessage(null) }, 5000)
+      })
   }
 
   const handleSubmit = (event) => {
