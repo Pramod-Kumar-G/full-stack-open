@@ -26,9 +26,12 @@ const App = () => {
       setTimeout(() => { setMessage(null) }, 5000)
       setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
     }).catch(error => {
-      setMessage({ content: `Information of ${newName} has already been removed from server`, success: false })
+      setMessage({ content: error.response.data.error })
+      if (!error.response.data.error) {
+        setMessage({ content: `Information of ${newName} has already been removed from server`, success: false })
+        setPersons(persons.filter(person => person.name !== newName))
+      }
       setTimeout(() => { setMessage(null) }, 5000)
-      setPersons(persons.filter(person => person.name !== newName))
     })
     setNewName("")
     setNewNumber("")
