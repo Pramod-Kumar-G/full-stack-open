@@ -1,11 +1,11 @@
-const mongoose = require("mongoose")
+const mongoose = require('mongoose')
 
 if (process.argv.length < 3) {
-  console.log("Not enough arguments provided")
+  console.log('Not enough arguments provided')
   process.exit(1)
 }
 if (process.argv.length !== 3 && process.argv.length !== 5) {
-  console.log("Please provide correct number of arguments(3 or 5)")
+  console.log('Please provide correct number of arguments(3 or 5)')
   process.exit(1)
 }
 
@@ -21,14 +21,14 @@ const personSchema = new mongoose.Schema({
   number: String,
 })
 
-const Person = mongoose.model("Person", personSchema)
+const Person = mongoose.model('Person', personSchema)
 
 if (process.argv.length === 3) {
   Person.find({}).then(result => {
-    console.log(`phonebook:`)
+    console.log('phonebook:')
     result.forEach(p => {
       console.log(`${p.name} ${p.number}`)
-    });
+    })
     mongoose.connection.close()
   })
 }
