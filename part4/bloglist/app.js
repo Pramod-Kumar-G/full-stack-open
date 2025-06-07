@@ -11,6 +11,7 @@ mongoose.connect(config.MONGODB_URI)
 app.use(express.json())
 
 app.use('/api/blogs', blogsRouter)
+
 app.use(unknownEndpoint)
 app.use(errorHandler)
 

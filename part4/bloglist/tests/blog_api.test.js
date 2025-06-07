@@ -4,31 +4,15 @@ const app = require('../app')
 const supertest = require('supertest')
 const assert = require('node:assert')
 const Blog = require('../models/blog')
+const { initialBlogs, blogsInDB } = require('./test_helper')
 
 
 const api = supertest(app)
 
-const initialBlogs = [
-  {
-    title: 'React patterns',
-    author: 'Michael Chan',
-    url: 'https://reactpatterns.com/',
-    likes: 7,
-  },
-  {
-    title: 'Go To Statement Considered Harmful',
-    author: 'Edsger W. Dijkstra',
-    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-    likes: 5,
-  },
-]
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  let blogObject = new Blog(initialBlogs[0])
-  await blogObject.save()
-  blogObject = new Blog(initialBlogs[1])
-  await blogObject.save()
+  await Blog.insertMany(initialBlogs)
 })
 
 test('blogs are returned as json', async () => {
@@ -68,9 +52,9 @@ test('a valid blog can be added', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-  const response = await api.get('/api/blogs')
-  assert.strictEqual(response.body.length, initialBlogs.length + 1)
-  const titles = response.body.map(b => b.title)
+  const blogs = await blogsInDB()
+  assert.strictEqual(blogs.length, initialBlogs.length + 1)
+  const titles = blogs.map(b => b.title)
   assert(titles.includes('Canonical string reduction'))
 })
 
@@ -89,7 +73,7 @@ test('blog without likes property defaults the value to 0', async () => {
   assert(response.body.likes === 0)
 })
 
-test.only('returns status code 400 if title is missing from blog', async () => {
+test('returns status code 400 if title is missing from blog', async () => {
   const newBlog = {
     author: 'Robert C. Martin',
     url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
@@ -102,7 +86,7 @@ test.only('returns status code 400 if title is missing from blog', async () => {
     .expect(400)
 })
 
-test.only('returns status code 400 if url is missing from blog', async () => {
+test('returns status code 400 if url is missing from blog', async () => {
   const newBlog = {
     title: 'TDD harms architecture',
     author: 'Robert C. Martin',
@@ -113,6 +97,20 @@ test.only('returns status code 400 if url is missing from blog', async () => {
     .post('/api/blogs')
     .send(newBlog)
     .expect(400)
+})
+
+test.only('successfully delete a valid blog', async () => {
+  const blogsAtStart = await blogsInDB()
+  const blogToDelete = blogsAtStart[0]
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+  const blogsAtEnd = await blogsInDB()
+
+  assert(blogsAtStart.length - 1 === blogsAtEnd.length)
+  const blogTitles = blogsAtEnd.map(b => b.title)
+  assert(!blogTitles.includes(blogToDelete.title))
 })
 
 after(async () => {
