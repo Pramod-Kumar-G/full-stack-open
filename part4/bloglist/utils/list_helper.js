@@ -1,12 +1,12 @@
-const dummy = (blogs) => {
-  return 1;
+const dummy = (_blogs) => {
+  return 1
 }
 
 const totalLikes = (blogs) => {
   const sumOfLikes = blogs.reduce((sum, blog) => {
     return sum + blog.likes
   }, 0)
-  return sumOfLikes;
+  return sumOfLikes
 }
 
 const favoriteBlog = (blogs) => {
@@ -35,7 +35,7 @@ const mostBlogs = (blogs) => {
       mostBlogAuthor = { author, blogs: blogCount }
       max = blogCount
     }
-  });
+  })
   return mostBlogAuthor
 
 }
@@ -50,7 +50,7 @@ const mostLikes = (blogs) => {
     if (!authors.includes(blog.author)) {
       authors.push(blog.author)
     }
-  });
+  })
 
   let mostLikesAuthor = {
     author: blogs[0].author,
