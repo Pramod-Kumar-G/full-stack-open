@@ -38,22 +38,40 @@ test('blogs are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
-test('all blogs are returned', async () => {
+test.only('all blogs are returned', async () => {
   const response = await api.get('/api/blogs')
-  assert.strictEqual(response.body.length, 2)
+  assert.strictEqual(response.body.length, initialBlogs.length)
 })
 
-test('a specific blog is within the returned blogs', async () => {
+test.only('a specific blog is within the returned blogs', async () => {
   const response = await api.get('/api/blogs')
 
   const titles = response.body.map(e => e.title)
-  assert.strictEqual(titles.includes('React patterns'), true)
+  assert(titles.includes('React patterns'))
 })
 
-test.only('unique identifier property of the blog posts is named id', async () => {
+test('unique identifier property of the blog posts is named id', async () => {
   const response = await api.get('/api/blogs')
-
   assert(response.body[0].id)
+})
+
+test.only('a valid blog can be added', async () => {
+  const newBlog = {
+    title: 'Canonical string reduction',
+    author: 'Edsger W. Dijkstra',
+    url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+    likes: 12,
+  }
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+  assert.strictEqual(response.body.length, initialBlogs.length + 1)
+  const titles = response.body.map(b => b.title)
+  assert(titles.includes('Canonical string reduction'))
 })
 
 after(async () => {
