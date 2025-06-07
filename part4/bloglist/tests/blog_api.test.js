@@ -74,7 +74,7 @@ test('a valid blog can be added', async () => {
   assert(titles.includes('Canonical string reduction'))
 })
 
-test.only('blog without likes property defaults the value to 0', async () => {
+test('blog without likes property defaults the value to 0', async () => {
   const newBlog = {
     title: 'First class tests',
     author: 'Robert C. Martin',
@@ -87,6 +87,32 @@ test.only('blog without likes property defaults the value to 0', async () => {
     .expect('Content-Type', /application\/json/)
 
   assert(response.body.likes === 0)
+})
+
+test.only('returns status code 400 if title is missing from blog', async () => {
+  const newBlog = {
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
+    likes: 0,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
+test.only('returns status code 400 if url is missing from blog', async () => {
+  const newBlog = {
+    title: 'TDD harms architecture',
+    author: 'Robert C. Martin',
+    likes: 0,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
 })
 
 after(async () => {
