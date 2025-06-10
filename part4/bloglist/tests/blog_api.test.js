@@ -6,9 +6,7 @@ const assert = require('node:assert')
 const Blog = require('../models/blog')
 const { initialBlogs, blogsInDB } = require('./test_helper')
 
-
 const api = supertest(app)
-
 
 describe('when there are initially some blogs saved', () => {
 
@@ -134,6 +132,7 @@ describe('when there are initially some blogs saved', () => {
   })
 
 })
+
 after(async () => {
   await mongoose.connection.close()
 })
