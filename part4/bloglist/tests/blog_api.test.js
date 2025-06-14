@@ -5,6 +5,10 @@ const supertest = require('supertest')
 const assert = require('node:assert')
 const Blog = require('../models/blog')
 const { initialBlogs, blogsInDB } = require('./test_helper')
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
+
+let token
 
 const api = supertest(app)
 
@@ -12,7 +16,23 @@ describe('when there are initially some blogs saved', () => {
 
   beforeEach(async () => {
     await Blog.deleteMany({})
-    await Blog.insertMany(initialBlogs)
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'testuser', passwordHash })
+    await user.save()
+
+    const loginResponse = await api
+      .post('/api/login')
+      .send({ username: 'testuser', password: 'sekret' })
+
+    token = loginResponse.body.token
+    for (const blog of initialBlogs) {
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(blog)
+    }
   })
 
   test('blogs are returned as json', async () => {
@@ -49,6 +69,7 @@ describe('when there are initially some blogs saved', () => {
       }
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -67,6 +88,7 @@ describe('when there are initially some blogs saved', () => {
       }
       const response = await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -83,6 +105,7 @@ describe('when there are initially some blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
     })
@@ -96,8 +119,25 @@ describe('when there are initially some blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
+    })
+
+    test.only('fails with status code 401 if token is not provided', async () => {
+      const newBlog = {
+        title: 'Canonical string reduction',
+        author: 'Edsger W. Dijkstra',
+        url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+        likes: 12,
+      }
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(401)
+
+      const blogs = await blogsInDB()
+      assert.strictEqual(blogs.length, initialBlogs.length)
     })
   })
 
@@ -107,6 +147,7 @@ describe('when there are initially some blogs saved', () => {
       const blogToDelete = blogsAtStart[0]
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect(204)
 
       const blogsAtEnd = await blogsInDB()

@@ -19,7 +19,7 @@ describe('when there is initially one user in db', () => {
     await user.save()
   })
 
-  test.only('creation succeeds with a fresh username', async () => {
+  test('creation succeeds with a fresh username', async () => {
     const usersAtStart = await usersInDB()
 
     const newUser = {
@@ -41,7 +41,7 @@ describe('when there is initially one user in db', () => {
     assert(usernames.includes(newUser.username))
   })
 
-  test.only('creation fails with proper statuscode and message if username already taken', async () => {
+  test('creation fails with proper statuscode and message if username already taken', async () => {
     const usersAtStart = await usersInDB()
 
     const newUser = {
@@ -62,7 +62,7 @@ describe('when there is initially one user in db', () => {
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
 
-  test.only('creation fails with proper statuscode and message if username is not provided', async () => {
+  test('creation fails with proper statuscode and message if username is not provided', async () => {
     const usersAtStart = await usersInDB()
 
     const newUser = {
@@ -81,7 +81,7 @@ describe('when there is initially one user in db', () => {
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
-  test.only('creation fails with proper statuscode and message if username is less than 3 characters', async () => {
+  test('creation fails with proper statuscode and message if username is less than 3 characters', async () => {
     const usersAtStart = await usersInDB()
 
     const newUser = {
@@ -102,7 +102,7 @@ describe('when there is initially one user in db', () => {
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
 
-  test.only('creation fails with proper statuscode and message if password is not provided', async () => {
+  test('creation fails with proper statuscode and message if password is not provided', async () => {
     const usersAtStart = await usersInDB()
 
     const newUser = {
@@ -121,7 +121,7 @@ describe('when there is initially one user in db', () => {
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
-  test.only('creation fails with proper statuscode and message if password is less than 3 characters', async () => {
+  test('creation fails with proper statuscode and message if password is less than 3 characters', async () => {
     const usersAtStart = await usersInDB()
 
     const newUser = {
