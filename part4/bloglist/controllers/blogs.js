@@ -8,7 +8,10 @@ blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
-
+blogsRouter.get('/:id', async (request, response) => {
+  const blogs = await Blog.findById(request.params.id).populate('user', { username: 1, name: 1 })
+  response.json(blogs)
+})
 
 blogsRouter.post('/', async (request, response) => {
   const decodedToken = jwt.verify(request.token, SECRET)
@@ -39,7 +42,20 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id)
+  const decodedToken = jwt.verify(request.token, SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
+  if (!user) {
+    return response.status(401).json({ error: 'unauthorized access' })
+  }
+
+  const blog = await Blog.findById(request.params.id)
+  if (blog.user.toString() !== decodedToken.id) {
+    return response.status(403).json({ error: 'You are not authorized to delete this blog' })
+  }
+  await blog.deleteOne()
   response.status(204).end()
 })
 
