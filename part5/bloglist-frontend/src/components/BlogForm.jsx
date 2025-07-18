@@ -1,13 +1,15 @@
-import { useState } from 'react'
+import { forwardRef, useState } from 'react'
 import blogService from '../services/blogs'
 
-const BlogForm = ({ blogs, setBlogs, setNotification }) => {
+const BlogForm = forwardRef((props, ref) => {
+  const { blogs, setBlogs, setNotification } = props
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
   const addBlog = async (e) => {
     e.preventDefault()
+    ref.current.toggleVisibility()
     const savedBlog = await blogService.createBlog({ title, author, url })
     setBlogs([...blogs, savedBlog])
     setNotification({ message: `a new blog ${savedBlog.title} by ${savedBlog.author} added`, type: 'success' })
@@ -26,6 +28,6 @@ const BlogForm = ({ blogs, setBlogs, setNotification }) => {
       </form>
     </div>
   )
-}
+})
 
 export default BlogForm
