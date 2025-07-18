@@ -24,7 +24,7 @@ const BlogForm = forwardRef((props, ref) => {
           <div>author: <input type='text' name='author' value={author} onChange={(e) => setAuthor(e.target.value)} /></div>
           <div>url: <input type='text' name='url' value={url} onChange={(e) => setUrl(e.target.value)} /></div>
         </div>
-        <button type='submit'>create</button>
+        <button type='submit'>Create</button>
       </form>
     </div>
   )
