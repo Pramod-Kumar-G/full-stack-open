@@ -15,6 +15,36 @@ const BlogDetails = ({ handleLogout, setNotification, user }) => {
     )
   }, [])
 
+  const handleUpdate = async (blog) => {
+    try {
+      const blogData = {
+        user: blog.user.id,
+        likes: blog.likes,
+        author: blog.author,
+        title: blog.title,
+        url: blog.url
+      }
+
+      const updatedBlog = await blogService.updateBlog(blog.id, blogData)
+      console.log("updated blog ---", updatedBlog)
+      const updatedBlogs = blogs.map(b =>
+        b.id === updatedBlog.id ? updatedBlog : b
+      )
+      setBlogs(updatedBlogs)
+
+      setNotification({
+        message: `Blog '${updatedBlog.title}' was liked`,
+        type: 'success'
+      })
+      setTimeout(() => setNotification(null), 3000)
+    } catch (error) {
+      setNotification({
+        message: 'Error updating blog',
+        type: 'error'
+      })
+      setTimeout(() => setNotification(null), 3000)
+    }
+  }
   return (
     <div>
       <h4>{user.name} logged in <button type="button" onClick={handleLogout}>logout</button></h4>
@@ -22,7 +52,7 @@ const BlogDetails = ({ handleLogout, setNotification, user }) => {
         <BlogForm blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} ref={ref} />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleUpdate={handleUpdate} />
       )}
     </div>
   )
