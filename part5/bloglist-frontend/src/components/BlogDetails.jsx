@@ -26,7 +26,6 @@ const BlogDetails = ({ handleLogout, setNotification, user }) => {
       }
 
       const updatedBlog = await blogService.updateBlog(blog.id, blogData)
-      console.log("updated blog ---", updatedBlog)
       const updatedBlogs = blogs.map(b =>
         b.id === updatedBlog.id ? updatedBlog : b
       )
