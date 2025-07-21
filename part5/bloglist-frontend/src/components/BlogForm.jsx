@@ -30,4 +30,6 @@ const BlogForm = forwardRef((props, ref) => {
   )
 })
 
+BlogForm.displayName = 'BlogForm'
+
 export default BlogForm

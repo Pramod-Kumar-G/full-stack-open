@@ -1,8 +1,8 @@
-import Blog from "./Blog"
+import Blog from './Blog'
 import blogService from '../services/blogs'
 import { useState, useEffect } from 'react'
-import BlogForm from "./BlogForm"
-import Togglable from "./Togglable"
+import BlogForm from './BlogForm'
+import Togglable from './Togglable'
 import { useRef } from 'react'
 
 const BlogDetails = ({ handleLogout, setNotification, user }) => {
@@ -11,7 +11,7 @@ const BlogDetails = ({ handleLogout, setNotification, user }) => {
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
-      blogs.sort((a, b) => b.likes - a.likes);
+      blogs.sort((a, b) => b.likes - a.likes)
       setBlogs(blogs)
     }
     )
@@ -60,8 +60,8 @@ const BlogDetails = ({ handleLogout, setNotification, user }) => {
   }
   return (
     <div>
-      <h4>{user.name} logged in <button type="button" onClick={handleLogout}>logout</button></h4>
-      <Togglable buttonLabel="create new blog" ref={ref}>
+      <h4>{user.name} logged in <button type='button' onClick={handleLogout}>logout</button></h4>
+      <Togglable buttonLabel='create new blog' ref={ref}>
         <BlogForm blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} ref={ref} />
       </Togglable>
       {blogs.map(blog =>

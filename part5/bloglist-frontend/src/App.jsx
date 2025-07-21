@@ -24,7 +24,7 @@ const App = () => {
 
   return (
     <div>
-      <h2>{user ? "Blogs" : "Log in to application"}</h2>
+      <h2>{user ? 'Blogs' : 'Log in to application'}</h2>
       {notification && <Notification notification={notification} />}
       {user ? <BlogDetails handleLogout={handleLogout} setNotification={setNotification} user={user} /> : <LoginForm setUser={setUser} setNotification={setNotification} />}
     </div>

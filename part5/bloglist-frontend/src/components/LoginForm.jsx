@@ -1,6 +1,7 @@
 import loginService from '../services/login'
 import blogService from '../services/blogs'
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const LoginForm = ({ setUser, setNotification }) => {
   const [username, setUsername] = useState('')
@@ -28,16 +29,21 @@ const LoginForm = ({ setUser, setNotification }) => {
       <form onSubmit={handleLogin}>
         <div>
           <div>
-            Username: <input type="text" name="username" value={username} onChange={(e) => setUsername(e.target.value)} />
+            Username: <input type='text' name='username' value={username} onChange={(e) => setUsername(e.target.value)} />
           </div>
           <div>
-            Password: <input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            Password: <input type='password' name='password' value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
         </div>
         <button type='submit'>login</button>
       </form>
     </div>
   )
+}
+
+LoginForm.propTypes = {
+  setUser: PropTypes.func.isRequired,
+  setNotification: PropTypes.func.isRequired
 }
 
 export default LoginForm
