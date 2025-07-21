@@ -46,6 +46,18 @@ const BlogDetails = ({ handleLogout, setNotification, user }) => {
       setTimeout(() => setNotification(null), 3000)
     }
   }
+
+  const handleDelete = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      try {
+        await blogService.deleteBlog(blog.id)
+        const updatedBlogs = blogs.filter(b => b.id !== blog.id)
+        setBlogs(updatedBlogs)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
   return (
     <div>
       <h4>{user.name} logged in <button type="button" onClick={handleLogout}>logout</button></h4>
@@ -53,7 +65,7 @@ const BlogDetails = ({ handleLogout, setNotification, user }) => {
         <BlogForm blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} ref={ref} />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleUpdate={handleUpdate} />
+        <Blog key={blog.id} blog={blog} handleUpdate={handleUpdate} handleDelete={handleDelete} user={user} />
       )}
     </div>
   )

@@ -1,7 +1,6 @@
 import { useState } from "react"
-import blogService from "../services/blogs.js"
 
-const Blog = ({ blog, handleUpdate }) => {
+const Blog = ({ blog, handleUpdate, handleDelete, user }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -15,7 +14,7 @@ const Blog = ({ blog, handleUpdate }) => {
     setIsVisible(!isVisible)
   }
 
-  console.log(blog)
+
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author} <button onClick={toggleVisibility}>{isVisible ? "hide" : "view"}</button>
@@ -29,6 +28,11 @@ const Blog = ({ blog, handleUpdate }) => {
         <div>
           {blog.user.name}
         </div>
+        {blog.user.username === user.username &&
+          <div>
+            <button onClick={() => handleDelete(blog)}>remove</button>
+          </div>
+        }
       </div>
     </div >
   )
