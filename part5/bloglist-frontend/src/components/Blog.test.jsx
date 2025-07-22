@@ -50,5 +50,29 @@ describe('<Blog />', () => {
     expect(togglableContent).not.toHaveStyle({ display: 'none' })
   })
 
+  test('handleUpdate is called twice when the like button is clicked twice', async () => {
+    const blog = {
+      title: 'Learn React',
+      author: 'Saik',
+      likes: 3,
+      url: 'medium.com',
+      user: {
+        name: 'Rambo',
+        username: 'rambo'
+      }
+    }
+    const userObject = { username: 'rambo' }
+    const updateLikes = vi.fn()
+    render(<Blog blog={blog} handleUpdate={updateLikes} user={userObject} />)
+
+    const user = userEvent.setup()
+    const likeButton = screen.getByText('like')
+
+    await user.click(likeButton)
+    await user.click(likeButton)
+
+    expect(updateLikes.mock.calls).toHaveLength(2)
+
+  })
 
 })
