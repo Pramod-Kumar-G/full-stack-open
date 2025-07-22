@@ -58,11 +58,20 @@ const BlogDetails = ({ handleLogout, setNotification, user }) => {
       }
     }
   }
+
+  const handleCreate = async (blog) => {
+    ref.current.toggleVisibility()
+    const savedBlog = await blogService.createBlog(blog)
+    setBlogs([...blogs, savedBlog])
+    setNotification({ message: `a new blog ${savedBlog.title} by ${savedBlog.author} added`, type: 'success' })
+    setTimeout(() => setNotification(''), 3000)
+  }
+
   return (
     <div>
       <h4>{user.name} logged in <button type='button' onClick={handleLogout}>logout</button></h4>
       <Togglable buttonLabel='create new blog' ref={ref}>
-        <BlogForm blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} ref={ref} />
+        <BlogForm createBlog={handleCreate} />
       </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} handleUpdate={handleUpdate} handleDelete={handleDelete} user={user} />
