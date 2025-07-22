@@ -1,6 +1,7 @@
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 import { render, screen } from '@testing-library/react'
+import { expect } from 'vitest'
 
 
 describe('<Blog />', () => {
@@ -25,5 +26,29 @@ describe('<Blog />', () => {
     const togglableContent = container.querySelector('.togglableContent')
     expect(togglableContent).toHaveStyle({ display: 'none' })
   })
+
+  test('displays likes and url when view is clicked', async () => {
+    const blog = {
+      title: 'Learn React',
+      author: 'Saik',
+      likes: 3,
+      url: 'medium.com',
+      user: {
+        name: 'Rambo',
+        username: 'rambo'
+      }
+    }
+    const userObject = { username: 'rambo' }
+    const container = render(<Blog blog={blog} user={userObject} />).container
+
+    const user = userEvent.setup()
+    const viewButton = screen.getByText('view')
+
+    await user.click(viewButton)
+
+    const togglableContent = container.querySelector('.togglableContent')
+    expect(togglableContent).not.toHaveStyle({ display: 'none' })
+  })
+
 
 })
