@@ -46,7 +46,13 @@ describe("Blog App", () => {
       await loginWith(page, "rambo", "sekret");
     });
     test("a new blog can be created", async ({ page }) => {
-      await createBlog(page, "Learn React", "pramod", "http://myblog.com/");
+      await createBlog(
+        page,
+        "Learn React",
+        "pramod",
+        "http://myblog.com/",
+        "rambo",
+      );
       await expect(
         page.getByText("a new blog Learn React by rambo added"),
       ).toBeVisible();
@@ -54,7 +60,13 @@ describe("Blog App", () => {
     });
     describe("and a blog is present", () => {
       beforeEach(async ({ page }) => {
-        await createBlog(page, "Learn React", "pramod", "http://myblog.com/");
+        await createBlog(
+          page,
+          "Learn React",
+          "pramod",
+          "http://myblog.com/",
+          "rambo",
+        );
       });
       test("the blog can be liked", async ({ page }) => {
         await page.getByRole("button", { name: "view" }).click();
@@ -90,6 +102,69 @@ describe("Blog App", () => {
         await expect(
           page.getByRole("button", { name: "remove" }),
         ).not.toBeVisible();
+      });
+    });
+    describe("and multiple blogs are present", () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(
+          page,
+          "Learn React",
+          "pramod",
+          "http://myblog.com/learn-react",
+          "rambo",
+        );
+        await createBlog(
+          page,
+          "Learn Javascript",
+          "pramod",
+          "http://myblog.com/learn-javascript",
+          "rambo",
+        );
+        await createBlog(
+          page,
+          "Learn Mongodb",
+          "pramod",
+          "http://myblog.com/learn-mongodb",
+          "rambo",
+        );
+      });
+      test.only("blogs are sorted according to the number of likes", async ({
+        page,
+      }) => {
+        await page
+          .getByText("Learn React rambo view")
+          .getByRole("button", { name: "view" })
+          .click();
+        let blogLocator = page.getByText("Learn React rambo hide");
+        await blogLocator.getByRole("button", { name: "like" }).click();
+        await blogLocator.getByText("likes 1 like").waitFor();
+
+        await page
+          .getByText("Learn Javascript rambo view")
+          .getByRole("button", { name: "view" })
+          .click();
+        blogLocator = page.getByText("Learn Javascript rambo hide");
+        await blogLocator.getByRole("button", { name: "like" }).click();
+        await blogLocator.getByText("likes 1 like").waitFor();
+        await blogLocator.getByRole("button", { name: "like" }).click();
+        await blogLocator.getByText("likes 2 like").waitFor();
+
+        await page
+          .getByText("Learn MongoDb rambo view")
+          .getByRole("button", { name: "view" })
+          .click();
+        blogLocator = page.getByText("Learn MongoDb rambo hide");
+        await blogLocator.getByRole("button", { name: "like" }).click();
+        await blogLocator.getByText("likes 1 like").waitFor();
+        await blogLocator.getByRole("button", { name: "like" }).click();
+        await blogLocator.getByText("likes 2 like").waitFor();
+        await blogLocator.getByRole("button", { name: "like" }).click();
+        await blogLocator.getByText("likes 3 like").waitFor();
+
+        const likesDiv = await page.getByText("likes").all();
+        await expect(likesDiv[0]).toHaveText("likes 3 like");
+        await expect(likesDiv[1]).toHaveText("likes 2 like");
+        await expect(likesDiv[2]).toHaveText("likes 1 like");
       });
     });
   });
