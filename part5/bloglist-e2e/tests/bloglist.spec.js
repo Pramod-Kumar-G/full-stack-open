@@ -34,4 +34,20 @@ describe("Blog App", () => {
       await expect(errorDiv).toContainText("Wrong username or password");
     });
   });
+  describe("when logged in", () => {
+    beforeEach(async ({ page }) => {
+      await loginWith(page, "rambo", "sekret");
+    });
+    test("a new blog can be created", async ({ page }) => {
+      await page.getByRole("button", { name: "create new blog" }).click();
+      await page.getByPlaceholder("enter title").fill("Learn React");
+      await page.getByPlaceholder("enter author name").fill("pramod");
+      await page.getByPlaceholder("enter url").fill("http://myblog.com/");
+      await page.getByRole("button", { name: "create" }).click();
+      await expect(
+        page.getByText("a new blog Learn React by rambo added"),
+      ).toBeVisible();
+      await expect(page.getByText("Learn React rambo")).toBeVisible();
+    });
+  });
 });
