@@ -1,5 +1,5 @@
 import { test, describe, expect, beforeEach } from "@playwright/test";
-import { loginWith } from "./helper";
+import { createBlog, loginWith } from "./helper";
 
 describe("Blog App", () => {
   beforeEach(async ({ page, request }) => {
@@ -39,15 +39,24 @@ describe("Blog App", () => {
       await loginWith(page, "rambo", "sekret");
     });
     test("a new blog can be created", async ({ page }) => {
-      await page.getByRole("button", { name: "create new blog" }).click();
-      await page.getByPlaceholder("enter title").fill("Learn React");
-      await page.getByPlaceholder("enter author name").fill("pramod");
-      await page.getByPlaceholder("enter url").fill("http://myblog.com/");
-      await page.getByRole("button", { name: "create" }).click();
+      await createBlog(page, "Learn React", "pramod", "http://myblog.com/");
       await expect(
         page.getByText("a new blog Learn React by rambo added"),
       ).toBeVisible();
       await expect(page.getByText("Learn React rambo")).toBeVisible();
+    });
+    describe("and a blog is present", () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(page, "Learn React", "pramod", "http://myblog.com/");
+      });
+      test("the blog can be liked", async ({ page }) => {
+        await page.getByRole("button", { name: "view" }).click();
+        await page.getByRole("button", { name: "like" }).click();
+        await expect(page.getByText("likes 1")).toBeVisible();
+        await expect(
+          page.getByText("Blog 'Learn React' was liked"),
+        ).toBeVisible();
+      });
     });
   });
 });
