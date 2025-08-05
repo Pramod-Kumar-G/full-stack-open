@@ -57,6 +57,15 @@ describe("Blog App", () => {
           page.getByText("Blog 'Learn React' was liked"),
         ).toBeVisible();
       });
+      test("the user who created the blog can delete it", async ({ page }) => {
+        await page.getByRole("button", { name: "view" }).click();
+        page.on("dialog", async (dialog) => {
+          console.log(dialog.message());
+          await dialog.accept();
+        });
+        await page.getByRole("button", { name: "remove" }).click();
+        await expect(page.getByText("Learn React Rambo")).not.toBeVisible();
+      });
     });
   });
 });
