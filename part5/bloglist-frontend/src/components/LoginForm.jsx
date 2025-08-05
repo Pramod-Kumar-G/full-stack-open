@@ -1,49 +1,65 @@
-import loginService from '../services/login'
-import blogService from '../services/blogs'
-import { useState } from 'react'
-import PropTypes from 'prop-types'
+import loginService from "../services/login";
+import blogService from "../services/blogs";
+import { useState } from "react";
+import PropTypes from "prop-types";
 
 const LoginForm = ({ setUser, setNotification }) => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
     try {
-      const userReturned = await loginService.login({ username, password })
-      setUser(userReturned)
-      setUsername('')
-      setPassword('')
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(userReturned))
-      blogService.setToken(userReturned.token)
-
+      const userReturned = await loginService.login({ username, password });
+      setUser(userReturned);
+      setUsername("");
+      setPassword("");
+      window.localStorage.setItem(
+        "loggedBlogappUser",
+        JSON.stringify(userReturned),
+      );
+      blogService.setToken(userReturned.token);
     } catch (exception) {
-      console.log('Wrong credentials')
-      setNotification({ message: 'Wrong username or password', type: 'error' })
-      setTimeout(() => setNotification(null), 3000)
+      console.log("Wrong credentials");
+      setNotification({ message: "Wrong username or password", type: "error" });
+      setTimeout(() => setNotification(null), 3000);
     }
-  }
+  };
 
   return (
     <div>
       <form onSubmit={handleLogin}>
         <div>
           <div>
-            Username: <input type='text' name='username' value={username} onChange={(e) => setUsername(e.target.value)} />
+            Username:{" "}
+            <input
+              type="text"
+              name="username"
+              data-testid="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
           </div>
           <div>
-            Password: <input type='password' name='password' value={password} onChange={(e) => setPassword(e.target.value)} />
+            Password:{" "}
+            <input
+              type="password"
+              name="password"
+              data-testid="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
         </div>
-        <button type='submit'>login</button>
+        <button type="submit">login</button>
       </form>
     </div>
-  )
-}
+  );
+};
 
 LoginForm.propTypes = {
   setUser: PropTypes.func.isRequired,
-  setNotification: PropTypes.func.isRequired
-}
+  setNotification: PropTypes.func.isRequired,
+};
 
-export default LoginForm
+export default LoginForm;
