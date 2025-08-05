@@ -11,6 +11,13 @@ describe("Blog App", () => {
         password: "sekret",
       },
     });
+    await request.post("/api/users", {
+      data: {
+        name: "Rangadu",
+        username: "ranga",
+        password: "sekret",
+      },
+    });
     await page.goto("/");
   });
 
@@ -65,6 +72,24 @@ describe("Blog App", () => {
         });
         await page.getByRole("button", { name: "remove" }).click();
         await expect(page.getByText("Learn React Rambo")).not.toBeVisible();
+      });
+      test("the user who created the blog can see blog's remove button", async ({
+        page,
+      }) => {
+        await page.getByRole("button", { name: "view" }).click();
+        await expect(
+          page.getByRole("button", { name: "remove" }),
+        ).toBeVisible();
+      });
+      test("blog's remove button is not visible to the user who didn't create it", async ({
+        page,
+      }) => {
+        await page.getByRole("button", { name: "logout" }).click();
+        await loginWith(page, "ranga", "sekret");
+        await page.getByRole("button", { name: "view" }).click();
+        await expect(
+          page.getByRole("button", { name: "remove" }),
+        ).not.toBeVisible();
       });
     });
   });
