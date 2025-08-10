@@ -17,8 +17,6 @@ const createNew = async (content) => {
 };
 
 const update = async (id, updatedAnecdote) => {
-  console.log(id, updatedAnecdote);
-  console.log(`${baseUrl}/${id}`);
   const response = await axios.put(`${baseUrl}/${id}`, updatedAnecdote);
   return response.data;
 };
