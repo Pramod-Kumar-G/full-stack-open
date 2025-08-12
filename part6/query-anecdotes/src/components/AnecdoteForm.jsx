@@ -20,6 +20,18 @@ const AnecdoteForm = () => {
         });
       }, 3000);
     },
+    onError: (error) => {
+      notificationDispatch({
+        type: "setNotification",
+        payload: "too short anecdote, must have length 5 or more",
+      });
+      setTimeout(() => {
+        notificationDispatch({
+          type: "clearNotification",
+        });
+      }, 3000);
+      console.log(error.response.data.error);
+    },
   });
 
   const onCreate = (event) => {
