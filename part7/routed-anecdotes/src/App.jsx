@@ -82,6 +82,12 @@ const CreateNew = (props) => {
     });
   };
 
+  const resetForm = () => {
+    content.resetValue();
+    author.resetValue();
+    info.resetValue();
+  };
+
   return (
     <div>
       <h2>create a new anecdote</h2>
@@ -106,7 +112,10 @@ const CreateNew = (props) => {
           url for more info
           <input name="info" value={info.value} onChange={info.onChange} />
         </div>
-        <button>create</button>
+        <button type="submit">create</button>
+        <button type="button" onClick={resetForm}>
+          reset
+        </button>
       </form>
     </div>
   );
