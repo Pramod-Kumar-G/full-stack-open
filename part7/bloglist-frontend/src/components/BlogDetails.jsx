@@ -1,6 +1,6 @@
 import Blog from "./Blog";
 import blogService from "../services/blogs";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import BlogForm from "./BlogForm";
 import Togglable from "./Togglable";
 import { useRef } from "react";
@@ -10,10 +10,10 @@ import {
   setNotification,
 } from "../reducers/notificationReducer";
 import {
-  appendBlog,
-  deleteBlog,
-  likeBlog,
+  createBlog,
+  removeBlog,
   setBlogs,
+  updateLikes,
 } from "../reducers/blogReducer.js";
 
 const BlogDetails = ({ handleLogout, user }) => {
@@ -31,19 +31,10 @@ const BlogDetails = ({ handleLogout, user }) => {
 
   const handleUpdate = async (blog) => {
     try {
-      const blogData = {
-        user: blog.user.id,
-        likes: blog.likes,
-        author: blog.author,
-        title: blog.title,
-        url: blog.url,
-      };
-
-      const updatedBlog = await blogService.updateBlog(blog.id, blogData);
-      dispatch(likeBlog(updatedBlog));
+      dispatch(updateLikes(blog));
       dispatch(
         setNotification({
-          message: `Blog '${updatedBlog.title}' was liked`,
+          message: `Blog '${blog.title}' was liked`,
           type: "success",
         }),
       );
@@ -62,10 +53,7 @@ const BlogDetails = ({ handleLogout, user }) => {
   const handleDelete = async (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       try {
-        await blogService.deleteBlog(blog.id);
-        // const updatedBlogs = blogs.filter((b) => b.id !== blog.id);
-        // dispatch(setBlogs(updatedBlogs));
-        dispatch(deleteBlog(blog.id));
+        dispatch(removeBlog(blog.id));
       } catch (error) {
         console.log(error);
       }
@@ -74,12 +62,11 @@ const BlogDetails = ({ handleLogout, user }) => {
 
   const handleCreate = async (blog) => {
     ref.current.toggleVisibility();
-    const savedBlog = await blogService.createBlog(blog);
+    dispatch(createBlog(blog));
 
-    dispatch(appendBlog(savedBlog));
     dispatch(
       setNotification({
-        message: `a new blog ${savedBlog.title} by ${savedBlog.author} added`,
+        message: `a new blog ${blog.title} by ${blog.author} added`,
         type: "success",
       }),
     );
