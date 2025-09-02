@@ -4,21 +4,28 @@ import { useState, useEffect } from "react";
 import BlogForm from "./BlogForm";
 import Togglable from "./Togglable";
 import { useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   clearNotification,
   setNotification,
 } from "../reducers/notificationReducer";
+import {
+  appendBlog,
+  deleteBlog,
+  likeBlog,
+  setBlogs,
+} from "../reducers/blogReducer.js";
 
 const BlogDetails = ({ handleLogout, user }) => {
-  const [blogs, setBlogs] = useState([]);
-  const ref = useRef(null);
+  const blogs = useSelector((state) => state.blogs);
   const dispatch = useDispatch();
 
+  const ref = useRef(null);
+
   useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      blogs.sort((a, b) => b.likes - a.likes);
-      setBlogs(blogs);
+    blogService.getAll().then((blogsReturned) => {
+      blogsReturned.sort((a, b) => b.likes - a.likes);
+      dispatch(setBlogs(blogsReturned));
     });
   }, []);
 
@@ -33,11 +40,7 @@ const BlogDetails = ({ handleLogout, user }) => {
       };
 
       const updatedBlog = await blogService.updateBlog(blog.id, blogData);
-      const updatedBlogs = blogs.map((b) =>
-        b.id === updatedBlog.id ? updatedBlog : b,
-      );
-      updatedBlogs.sort((a, b) => b.likes - a.likes);
-      setBlogs(updatedBlogs);
+      dispatch(likeBlog(updatedBlog));
       dispatch(
         setNotification({
           message: `Blog '${updatedBlog.title}' was liked`,
@@ -60,8 +63,9 @@ const BlogDetails = ({ handleLogout, user }) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       try {
         await blogService.deleteBlog(blog.id);
-        const updatedBlogs = blogs.filter((b) => b.id !== blog.id);
-        setBlogs(updatedBlogs);
+        // const updatedBlogs = blogs.filter((b) => b.id !== blog.id);
+        // dispatch(setBlogs(updatedBlogs));
+        dispatch(deleteBlog(blog.id));
       } catch (error) {
         console.log(error);
       }
@@ -71,7 +75,8 @@ const BlogDetails = ({ handleLogout, user }) => {
   const handleCreate = async (blog) => {
     ref.current.toggleVisibility();
     const savedBlog = await blogService.createBlog(blog);
-    setBlogs([...blogs, savedBlog]);
+
+    dispatch(appendBlog(savedBlog));
     dispatch(
       setNotification({
         message: `a new blog ${savedBlog.title} by ${savedBlog.author} added`,
@@ -84,7 +89,7 @@ const BlogDetails = ({ handleLogout, user }) => {
   return (
     <div>
       <h4>
-        {user.name} logged in{" "}
+        {user.name} logged in
         <button type="button" onClick={handleLogout}>
           logout
         </button>
