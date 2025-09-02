@@ -7,8 +7,9 @@ import {
   clearNotification,
   setNotification,
 } from "../reducers/notificationReducer";
+import { setUser } from "../reducers/userReducer";
 
-const LoginForm = ({ setUser }) => {
+const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ const LoginForm = ({ setUser }) => {
     event.preventDefault();
     try {
       const userReturned = await loginService.login({ username, password });
-      setUser(userReturned);
+      dispatch(setUser(userReturned));
       setUsername("");
       setPassword("");
       window.localStorage.setItem(
@@ -68,11 +69,6 @@ const LoginForm = ({ setUser }) => {
       </form>
     </div>
   );
-};
-
-LoginForm.propTypes = {
-  setUser: PropTypes.func.isRequired,
-  // setNotification: PropTypes.func.isRequired,
 };
 
 export default LoginForm;

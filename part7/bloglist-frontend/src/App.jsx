@@ -3,23 +3,27 @@ import blogService from "./services/blogs";
 import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
 import BlogDetails from "./components/BlogDetails";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "./reducers/userReducer";
 
 const App = () => {
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+
   const notification = useSelector((state) => state.notification);
 
   useEffect(() => {
     const loggedUser = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUser) {
       const parsedUser = JSON.parse(loggedUser);
-      setUser(parsedUser);
+
+      dispatch(setUser(parsedUser));
       blogService.setToken(parsedUser.token);
     }
   }, []);
 
   const handleLogout = () => {
-    setUser(null);
+    dispatch(setUser(null));
     window.localStorage.removeItem("loggedBlogappUser");
   };
 
@@ -30,7 +34,7 @@ const App = () => {
       {user ? (
         <BlogDetails handleLogout={handleLogout} user={user} />
       ) : (
-        <LoginForm setUser={setUser} />
+        <LoginForm />
       )}
     </div>
   );
