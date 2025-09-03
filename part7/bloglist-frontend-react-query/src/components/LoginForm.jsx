@@ -4,7 +4,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import { useNotificationDispatch } from "../context/NotificationContext";
 
-const LoginForm = ({ setUser }) => {
+const LoginForm = ({ dispatch }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const notificationDispatch = useNotificationDispatch();
@@ -13,7 +13,7 @@ const LoginForm = ({ setUser }) => {
     event.preventDefault();
     try {
       const userReturned = await loginService.login({ username, password });
-      setUser(userReturned);
+      dispatch({ type: "setUser", payload: userReturned });
       setUsername("");
       setPassword("");
       window.localStorage.setItem(
@@ -63,7 +63,7 @@ const LoginForm = ({ setUser }) => {
 };
 
 LoginForm.propTypes = {
-  setUser: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 export default LoginForm;
