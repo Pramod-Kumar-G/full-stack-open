@@ -1,10 +1,8 @@
 import loginService from "../services/login";
 import blogService from "../services/blogs";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
-import NotificationContext, {
-  useNotificationDispatch,
-} from "../context/NotificationContext";
+import { useNotificationDispatch } from "../context/NotificationContext";
 
 const LoginForm = ({ setUser }) => {
   const [username, setUsername] = useState("");
