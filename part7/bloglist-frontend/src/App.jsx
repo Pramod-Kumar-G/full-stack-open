@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import blogService from "./services/blogs";
 import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
@@ -8,6 +8,8 @@ import { setUser } from "./reducers/userReducer";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Users from "./components/Users";
 import { initializeBlogs } from "./reducers/blogReducer";
+import UserBlogs from "./components/UserBlogs";
+import { getAllUsers } from "./services/users";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -29,6 +31,11 @@ const App = () => {
     dispatch(initializeBlogs());
   }, []);
 
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    getAllUsers().then((users) => setUsers(users));
+  }, []);
+
   const handleLogout = () => {
     dispatch(setUser(null));
     window.localStorage.removeItem("loggedBlogappUser");
@@ -48,7 +55,8 @@ const App = () => {
       </div>
       <Routes>
         <Route path="/" element={user ? <BlogDetails /> : <LoginForm />} />
-        <Route path="/users" element={<Users />} />
+        <Route path="/users/:id" element={<UserBlogs users={users} />} />
+        <Route path="/users" element={<Users users={users} />} />
       </Routes>
     </BrowserRouter>
   );
