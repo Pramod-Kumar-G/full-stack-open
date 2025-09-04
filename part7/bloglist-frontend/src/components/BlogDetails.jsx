@@ -1,6 +1,4 @@
 import Blog from "./Blog";
-import blogService from "../services/blogs";
-import { useEffect } from "react";
 import BlogForm from "./BlogForm";
 import Togglable from "./Togglable";
 import { useRef } from "react";
@@ -12,22 +10,14 @@ import {
 import {
   createBlog,
   removeBlog,
-  setBlogs,
   updateLikes,
 } from "../reducers/blogReducer.js";
 
-const BlogDetails = ({ handleLogout, user }) => {
+const BlogDetails = () => {
   const blogs = useSelector((state) => state.blogs);
   const dispatch = useDispatch();
 
   const ref = useRef(null);
-
-  useEffect(() => {
-    blogService.getAll().then((blogsReturned) => {
-      blogsReturned.sort((a, b) => b.likes - a.likes);
-      dispatch(setBlogs(blogsReturned));
-    });
-  }, []);
 
   const handleUpdate = async (blog) => {
     try {
@@ -63,24 +53,10 @@ const BlogDetails = ({ handleLogout, user }) => {
   const handleCreate = async (blog) => {
     ref.current.toggleVisibility();
     dispatch(createBlog(blog));
-
-    dispatch(
-      setNotification({
-        message: `a new blog ${blog.title} by ${blog.author} added`,
-        type: "success",
-      }),
-    );
-    setTimeout(() => setNotification(""), 3000);
   };
 
   return (
     <div>
-      <h4>
-        {user.name} logged in
-        <button type="button" onClick={handleLogout}>
-          logout
-        </button>
-      </h4>
       <Togglable buttonLabel="create new blog" ref={ref}>
         <BlogForm createBlog={handleCreate} />
       </Togglable>
@@ -90,7 +66,6 @@ const BlogDetails = ({ handleLogout, user }) => {
           blog={blog}
           handleUpdate={handleUpdate}
           handleDelete={handleDelete}
-          user={user}
         />
       ))}
     </div>
