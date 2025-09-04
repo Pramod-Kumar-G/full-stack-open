@@ -5,9 +5,15 @@ import {
   clearNotification,
   setNotification,
 } from "../reducers/notificationReducer";
-import { removeBlog, updateLikes } from "../reducers/blogReducer.js";
+import {
+  addComment,
+  removeBlog,
+  updateLikes,
+} from "../reducers/blogReducer.js";
+import blogService from "../services/blogs";
 
 const Blog = () => {
+  const [comment, setComment] = useState("");
   const blogs = useSelector((state) => state.blogs);
   const id = useParams().id;
   const blog = blogs.find((b) => b.id === id);
@@ -42,7 +48,14 @@ const Blog = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       dispatch(removeBlog(blog.id));
       navigate("/");
+      S;
     }
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    dispatch(addComment(id, comment));
+    setComment("");
   };
 
   return (
@@ -51,7 +64,7 @@ const Blog = () => {
         {blog.title} {blog.author}
       </h2>
 
-      <div className="togglableContent">
+      <div>
         <a href={blog.url}>{blog.url}</a>
         <div>
           {blog.likes} likes
@@ -68,6 +81,20 @@ const Blog = () => {
           </div>
         )}
       </div>
+      <h3>Comments</h3>
+      <form onSubmit={handleCommentSubmit}>
+        <input
+          type="text"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+        />
+        <button type="submit">add comment</button>
+      </form>
+      <ul>
+        {blog.comments.map((comment) => (
+          <li key={comment}>{comment}</li>
+        ))}
+      </ul>
     </div>
   );
 };
