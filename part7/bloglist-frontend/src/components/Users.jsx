@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { getAllUsers } from "../services/users";
 import { Link } from "react-router-dom";
 
 const Users = ({ users }) => {

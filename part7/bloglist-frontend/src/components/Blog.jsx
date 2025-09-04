@@ -1,36 +1,67 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import {
+  clearNotification,
+  setNotification,
+} from "../reducers/notificationReducer";
+import { removeBlog, updateLikes } from "../reducers/blogReducer.js";
 
-const Blog = ({ blog, handleUpdate, handleDelete }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
+const Blog = () => {
+  const blogs = useSelector((state) => state.blogs);
+  const id = useParams().id;
+  const blog = blogs.find((b) => b.id === id);
   const user = useSelector((state) => state.user);
-  const [isVisible, setIsVisible] = useState(false);
-  const showWhenVisible = { display: isVisible ? "" : "none" };
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  if (!blog) return null;
+
+  const handleUpdate = async (blog) => {
+    try {
+      dispatch(updateLikes(blog));
+      dispatch(
+        setNotification({
+          message: `Blog '${blog.title}' was liked`,
+          type: "success",
+        }),
+      );
+      setTimeout(() => dispatch(clearNotification()), 3000);
+    } catch (error) {
+      dispatch(
+        setNotification({
+          message: "Error updating blog",
+          type: "error",
+        }),
+      );
+      setTimeout(() => dispatch(clearNotification()), 3000);
+    }
+  };
+
+  const handleDelete = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      dispatch(removeBlog(blog.id));
+      navigate("/");
+    }
   };
 
   return (
-    <div style={blogStyle}>
-      {blog.title} {blog.author}
-      <button onClick={toggleVisibility}>{isVisible ? "hide" : "view"}</button>
-      <div style={showWhenVisible} className="togglableContent">
-        <div>{blog.url}</div>
+    <div>
+      <h2>
+        {blog.title} {blog.author}
+      </h2>
+
+      <div className="togglableContent">
+        <a href={blog.url}>{blog.url}</a>
         <div>
-          likes {blog.likes}
+          {blog.likes} likes
           <button
             onClick={() => handleUpdate({ ...blog, likes: blog.likes + 1 })}
           >
             like
           </button>
         </div>
-        <div>{blog.user.name}</div>
+        <div>Added by {blog.user.name}</div>
         {blog.user.username === user.username && (
           <div>
             <button onClick={() => handleDelete(blog)}>remove</button>

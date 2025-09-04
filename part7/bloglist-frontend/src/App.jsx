@@ -10,6 +10,7 @@ import Users from "./components/Users";
 import { initializeBlogs } from "./reducers/blogReducer";
 import UserBlogs from "./components/UserBlogs";
 import { getAllUsers } from "./services/users";
+import Blog from "./components/Blog";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -57,6 +58,7 @@ const App = () => {
         <Route path="/" element={user ? <BlogDetails /> : <LoginForm />} />
         <Route path="/users/:id" element={<UserBlogs users={users} />} />
         <Route path="/users" element={<Users users={users} />} />
+        <Route path="/blogs/:id" element={<Blog />} />
       </Routes>
     </BrowserRouter>
   );
