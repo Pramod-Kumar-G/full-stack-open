@@ -5,7 +5,7 @@ import LoginForm from "./components/LoginForm";
 import BlogDetails from "./components/BlogDetails";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "./reducers/userReducer";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import Users from "./components/Users";
 import { initializeBlogs } from "./reducers/blogReducer";
 import UserBlogs from "./components/UserBlogs";
@@ -44,15 +44,28 @@ const App = () => {
 
   return (
     <BrowserRouter>
+      <div
+        style={{
+          display: "flex",
+          gap: "1.4em",
+          backgroundColor: "lightgrey",
+          padding: "0.5em",
+        }}
+      >
+        <Link to="/">Blogs</Link>
+        <Link to="/users">Users</Link>
+        {user && (
+          <div>
+            {user.name} logged in{" "}
+            <button type="button" onClick={handleLogout}>
+              logout
+            </button>
+          </div>
+        )}
+      </div>
       <div>
-        <h2>{user ? "Blogs" : "Log in to application"}</h2>
+        <h2>{user ? "Blog App" : "Log in to application"}</h2>
         {notification && <Notification notification={notification} />}
-        <h4>
-          {user?.name} logged in
-          <button type="button" onClick={handleLogout}>
-            logout
-          </button>
-        </h4>
       </div>
       <Routes>
         <Route path="/" element={user ? <BlogDetails /> : <LoginForm />} />
