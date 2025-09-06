@@ -11,6 +11,8 @@ import { initializeBlogs } from "./reducers/blogReducer";
 import UserBlogs from "./components/UserBlogs";
 import { getAllUsers } from "./services/users";
 import Blog from "./components/Blog";
+import NavBar from "./components/NavBar";
+import Blogs from "./components/Blogs";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -37,38 +39,13 @@ const App = () => {
     getAllUsers().then((users) => setUsers(users));
   }, []);
 
-  const handleLogout = () => {
-    dispatch(setUser(null));
-    window.localStorage.removeItem("loggedBlogappUser");
-  };
-
   return (
     <BrowserRouter>
-      <div
-        style={{
-          display: "flex",
-          gap: "1.4em",
-          backgroundColor: "lightgrey",
-          padding: "0.5em",
-        }}
-      >
-        <Link to="/">Blogs</Link>
-        <Link to="/users">Users</Link>
-        {user && (
-          <div>
-            {user.name} logged in{" "}
-            <button type="button" onClick={handleLogout}>
-              logout
-            </button>
-          </div>
-        )}
-      </div>
-      <div>
-        <h2>{user ? "Blog App" : "Log in to application"}</h2>
-        {notification && <Notification notification={notification} />}
-      </div>
+      <NavBar />
+      <div>{notification && <Notification />}</div>
       <Routes>
         <Route path="/" element={user ? <BlogDetails /> : <LoginForm />} />
+        <Route path="/blogs" element={<Blogs />} />
         <Route path="/users/:id" element={<UserBlogs users={users} />} />
         <Route path="/users" element={<Users users={users} />} />
         <Route path="/blogs/:id" element={<Blog />} />

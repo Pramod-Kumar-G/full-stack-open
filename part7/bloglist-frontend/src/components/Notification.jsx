@@ -1,17 +1,13 @@
-const Notification = ({ notification }) => {
+import { Alert } from "@mui/material";
+import { useSelector } from "react-redux";
+
+const Notification = () => {
+  const notification = useSelector((state) => state.notification);
   return (
-    <div
-      className="notification"
-      style={{
-        background: "#eee",
-        padding: "10px",
-        marginBottom: "10px",
-        borderRadius: "6px",
-        border: `4px solid ${notification.type === "error" ? "red" : "green"}`,
-        color: `${notification.type === "error" ? "red" : "green"}`,
-      }}
-    >
-      {notification.message}
+    <div style={{ display: notification.message === "" ? "" : "block" }}>
+      <Alert severity={notification.severity} sx={{ marginTop: 2 }}>
+        {notification.message}
+      </Alert>
     </div>
   );
 };

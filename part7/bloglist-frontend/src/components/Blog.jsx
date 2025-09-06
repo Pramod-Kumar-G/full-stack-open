@@ -1,19 +1,15 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   clearNotification,
   setNotification,
 } from "../reducers/notificationReducer";
-import {
-  addComment,
-  removeBlog,
-  updateLikes,
-} from "../reducers/blogReducer.js";
-import blogService from "../services/blogs";
+import { removeBlog, updateLikes } from "../reducers/blogReducer.js";
+import { Box, Button, Paper, Typography } from "@mui/material";
+import Comments from "./Comments";
 
 const Blog = () => {
-  const [comment, setComment] = useState("");
   const blogs = useSelector((state) => state.blogs);
   const id = useParams().id;
   const blog = blogs.find((b) => b.id === id);
@@ -29,18 +25,22 @@ const Blog = () => {
       dispatch(
         setNotification({
           message: `Blog '${blog.title}' was liked`,
-          type: "success",
+          severity: "success",
         }),
       );
-      setTimeout(() => dispatch(clearNotification()), 3000);
+      setTimeout(() => {
+        dispatch(clearNotification());
+      }, 3000);
     } catch (error) {
       dispatch(
         setNotification({
           message: "Error updating blog",
-          type: "error",
+          severity: "error",
         }),
       );
-      setTimeout(() => dispatch(clearNotification()), 3000);
+      setTimeout(() => {
+        dispatch(clearNotification());
+      }, 3000);
     }
   };
 
@@ -48,54 +48,47 @@ const Blog = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       dispatch(removeBlog(blog.id));
       navigate("/");
-      S;
     }
   };
 
-  const handleCommentSubmit = async (e) => {
-    e.preventDefault();
-    dispatch(addComment(id, comment));
-    setComment("");
-  };
-
   return (
-    <div>
-      <h2>
-        {blog.title} {blog.author}
-      </h2>
-
-      <div>
-        <a href={blog.url}>{blog.url}</a>
+    <Box sx={{ marginTop: 3 }}>
+      <Paper sx={{ maxWidth: "450px", margin: "auto", padding: 4 }}>
+        <Typography variant="h3" gutterBottom>
+          {blog.title} {blog.author}
+        </Typography>
         <div>
-          {blog.likes} likes
-          <button
-            onClick={() => handleUpdate({ ...blog, likes: blog.likes + 1 })}
-          >
-            like
-          </button>
-        </div>
-        <div>Added by {blog.user.name}</div>
-        {blog.user.username === user.username && (
+          <Typography variant="h6" gutterBottom>
+            <a href={blog.url}>{blog.url}</a>
+          </Typography>
           <div>
-            <button onClick={() => handleDelete(blog)}>remove</button>
+            <Typography variant="h6" gutterBottom>
+              {blog.likes} likes
+              <Button
+                onClick={() => handleUpdate({ ...blog, likes: blog.likes + 1 })}
+              >
+                like
+              </Button>
+            </Typography>
           </div>
-        )}
-      </div>
-      <h3>Comments</h3>
-      <form onSubmit={handleCommentSubmit}>
-        <input
-          type="text"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-        />
-        <button type="submit">add comment</button>
-      </form>
-      <ul>
-        {blog.comments.map((comment) => (
-          <li key={comment}>{comment}</li>
-        ))}
-      </ul>
-    </div>
+          <Typography variant="h6" gutterBottom>
+            Added by {blog.user.name}
+          </Typography>
+          {blog.user.username === user.username && (
+            <div>
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={() => handleDelete(blog)}
+              >
+                remove
+              </Button>
+            </div>
+          )}
+        </div>
+      </Paper>
+      <Comments blog={blog} />
+    </Box>
   );
 };
 

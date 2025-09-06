@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import blogService from "../services/blogs";
 import { clearNotification, setNotification } from "./notificationReducer";
-import { useNavigate } from "react-router-dom";
 
 const blogSlice = createSlice({
   name: "blogs",
@@ -58,10 +57,12 @@ export const createBlog = (blog) => {
       dispatch(
         setNotification({
           message: `a new blog ${blog.title} by ${blog.author} added`,
-          type: "success",
+          severity: "success",
         }),
       );
-      setTimeout(() => clearNotification(), 3000);
+      setTimeout(() => {
+        dispatch(clearNotification());
+      }, 3000);
     } catch (error) {
       console.log(error);
     }
