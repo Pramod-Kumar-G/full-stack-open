@@ -41,6 +41,7 @@ const calculateExercises = (
     average,
   };
 };
+export default calculateExercises;
 
 const parseArguments = (args: string[]) => {
   if (args.length < 4) throw new Error("Not enough arguments");
