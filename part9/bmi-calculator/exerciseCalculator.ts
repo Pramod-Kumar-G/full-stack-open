@@ -42,4 +42,25 @@ const calculateExercises = (
   };
 };
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 3));
+const parseArguments = (args: string[]) => {
+  if (args.length < 4) throw new Error("Not enough arguments");
+  const argValues = args.slice(2).map((x) => {
+    if (isNaN(Number(x))) {
+      throw new Error("Provided values were not numbers!");
+    }
+    return Number(x);
+  });
+  return { target: argValues[0], dailyExerciseHours: argValues.slice(1) };
+};
+
+try {
+  const { target, dailyExerciseHours } = parseArguments(process.argv);
+  console.log(calculateExercises(dailyExerciseHours, target));
+} catch (error: unknown) {
+  let errorMessage = "Something bad happended. ";
+  if (error instanceof Error) {
+    errorMessage += error.message;
+  }
+  console.log(errorMessage);
+}
+export {};
