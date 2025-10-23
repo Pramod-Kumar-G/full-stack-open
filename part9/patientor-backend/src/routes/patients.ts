@@ -16,8 +16,15 @@ const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
 };
 
 router.get("/", (_req, res: Response<NonSensitivePatientData[]>) => {
-  const patients = patientService.getNonSensitivePatientData();
+  const patients = patientService.getNonSensitivePatientsData();
   res.send(patients);
+});
+
+router.get("/:id", (req, res: Response<Patient>) => {
+  const { id } = req.params;
+  const patient = patientService.getNonSensitivePatientData(id);
+  if (patient) res.send(patient);
+  else res.sendStatus(404);
 });
 
 router.post(
