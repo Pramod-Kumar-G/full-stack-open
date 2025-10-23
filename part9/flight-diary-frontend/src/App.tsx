@@ -5,9 +5,11 @@ import {
   type Weather,
 } from "./types";
 import { addDiary, getDiaries } from "./diaryService";
+import axios from "axios";
 
 const App = () => {
   const [diaries, setDiaries] = useState<NonSensitiveDiaryEntry[]>([]);
+  const [errorMessage, setErrorMessage] = useState("");
   const [visibility, setVisibility] = useState<Visibility>("" as Visibility);
   const [weather, setWeather] = useState<Weather>("" as Weather);
   const [comment, setComment] = useState("");
@@ -19,14 +21,22 @@ const App = () => {
   const createDiaryEntry = (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (visibility && weather) {
-      addDiary({ date, visibility, weather, comment }).then((diary) =>
-        setDiaries(diaries.concat(diary)),
-      );
+      addDiary({ date, visibility, weather, comment })
+        .then((diary) => setDiaries(diaries.concat(diary)))
+        .catch((error: unknown) => {
+          if (axios.isAxiosError(error)) {
+            console.log(error.response?.data);
+            setErrorMessage(error.response?.data);
+          } else {
+            console.error(error);
+          }
+        });
     }
   };
   return (
     <div>
       <h3>Add new entry</h3>
+      <p style={{ color: "red" }}>{errorMessage}</p>
       <form onSubmit={createDiaryEntry}>
         <div>
           Date
