@@ -7,5 +7,9 @@ export const NewPatientSchema = z.object({
   ssn: z.string(),
   gender: z.enum(Gender),
   occupation: z.string(),
-  // entries: z.array(z.string()),
+  entries: z.array(
+    z.object({
+      type: z.enum(["HealthCheck", "OccupationalHealthcare", "Hospital"]),
+    }),
+  ),
 });

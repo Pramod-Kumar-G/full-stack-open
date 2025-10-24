@@ -22,7 +22,7 @@ router.get("/", (_req, res: Response<NonSensitivePatientData[]>) => {
 
 router.get("/:id", (req, res: Response<Patient>) => {
   const { id } = req.params;
-  const patient = patientService.getNonSensitivePatientData(id);
+  const patient = patientService.getPatientData(id);
   if (patient) res.send(patient);
   else res.sendStatus(404);
 });
