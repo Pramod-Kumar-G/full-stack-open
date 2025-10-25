@@ -63,3 +63,8 @@ export interface HospitalEntry extends BaseEntry {
     criteria: string;
   };
 }
+
+export interface EntryProps {
+  entry: OccupationalHealthcareEntry;
+  diagnoses: Diagnosis[];
+}

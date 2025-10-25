@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import patientService from "../services/patients";
-import diagnosisService from "../services/diagnoses";
-import { Diagnosis, Patient } from "../types";
+import patientService from "../../services/patients";
+import { Patient } from "../../types";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
+import PatientEntry from "./Entry";
 
 const PatientPage = () => {
   const [patient, setPatient] = useState<Patient>();
-  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>();
   const { id } = useParams();
   if (!id) {
     return <div>No Patient Found</div>;
@@ -17,9 +16,6 @@ const PatientPage = () => {
     patientService.getById(id).then((patient) => {
       console.log(patient);
       setPatient(patient);
-    });
-    diagnosisService.getAll().then((diagnoses) => {
-      setDiagnoses(diagnoses);
     });
   }, []);
   return (
@@ -33,15 +29,17 @@ const PatientPage = () => {
       <p style={{ fontWeight: "bold" }}>entries</p>
       <div>
         {patient?.entries.map((entry) => (
-          <div key={entry.id}>
-            {entry.date} {entry.description}
-            <ul>
-              {entry.diagnosisCodes?.map((code) => (
-                <li key={code}>
-                  {code} {diagnoses?.find((d) => d.code === code)?.name}
-                </li>
-              ))}
-            </ul>
+          <div
+            key={entry.id}
+            style={{
+              border: "2px solid black",
+              borderRadius: "0.3em",
+              marginBottom: "0.5em",
+              padding: "0.2em",
+            }}
+          >
+            <PatientEntry entry={entry} />
+            <div>diagnose by {entry.specialist}</div>
           </div>
         ))}
       </div>
