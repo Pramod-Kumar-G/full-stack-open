@@ -13,6 +13,7 @@ const PatientPage = () => {
   }
   useEffect(() => {
     patientService.getById(id).then((patient) => {
+      console.log(patient);
       setPatient(patient);
     });
   }, []);
@@ -24,6 +25,19 @@ const PatientPage = () => {
       </h2>
       <div>ssn: {patient?.ssn}</div>
       <div>occupation: {patient?.occupation}</div>
+      <p style={{ fontWeight: "bold" }}>entries</p>
+      <div>
+        {patient?.entries.map((entry) => (
+          <div key={entry.id}>
+            {entry.date} {entry.description}
+            <ul>
+              {entry.diagnosisCodes?.map((code) => (
+                <li key={code}>{code}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
