@@ -1,7 +1,13 @@
 import express, { NextFunction, Request, Response } from "express";
 import patientService from "../services/patientService";
-import { NewPatient, NonSensitivePatientData, Patient } from "../types";
-import { NewPatientSchema } from "../utils";
+import {
+  Entry,
+  NewEntry,
+  NewPatient,
+  NonSensitivePatientData,
+  Patient,
+} from "../types";
+import { NewEntrySchema, NewPatientSchema } from "../utils";
 import z from "zod";
 
 const router = express.Router();
@@ -9,6 +15,15 @@ const router = express.Router();
 const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
   try {
     NewPatientSchema.parse(req.body);
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+const newEntryParser = (req: Request, _res: Response, next: NextFunction) => {
+  try {
+    NewEntrySchema.parse(req.body);
     next();
   } catch (error) {
     next(error);
@@ -31,8 +46,19 @@ router.post(
   "/",
   newPatientParser,
   (req: Request<unknown, unknown, NewPatient>, res: Response<Patient>) => {
+    console.log(req.body);
     const addedPatient = patientService.addPatient(req.body);
     res.send(addedPatient);
+  },
+);
+
+router.post(
+  "/:id/entries",
+  newEntryParser,
+  (req: Request<{ id: string }, unknown, NewEntry>, res: Response<Entry>) => {
+    const { id } = req.params;
+    const addedEntry = patientService.addEntry(id, req.body);
+    res.send(addedEntry);
   },
 );
 

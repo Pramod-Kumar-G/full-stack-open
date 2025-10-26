@@ -4,20 +4,18 @@ import patientService from "../../services/patients";
 import { Patient } from "../../types";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
-import PatientEntry from "./Entry";
+import PatientEntry from "./PatientEntry";
 
 const PatientPage = () => {
   const [patient, setPatient] = useState<Patient>();
   const { id } = useParams();
-  if (!id) {
-    return <div>No Patient Found</div>;
-  }
   useEffect(() => {
+    if (!id) return;
     patientService.getById(id).then((patient) => {
       console.log(patient);
       setPatient(patient);
     });
-  }, []);
+  }, [id]);
   return (
     <div>
       <h2>
