@@ -5,24 +5,13 @@ import { EntryFormValues, Patient } from "../../types";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import PatientEntry from "./PatientEntry";
-import {
-  Alert,
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-} from "@mui/material";
-import HealthCheckForm from "./PatientEntryForm/HealthCheckForm";
-import HospitalForm from "./PatientEntryForm/HospitalForm";
-import OccupationalHealthcareForm from "./PatientEntryForm/OccupationalHealthcareForm";
+import { Alert, Button } from "@mui/material";
+import PatientEntryForm from "./PatientEntryForm";
 
 const PatientPage = () => {
   const [patient, setPatient] = useState<Patient>();
   const [errorMessage, setErrorMessage] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [entryForm, setEntryForm] = useState("");
 
   const { id } = useParams();
   useEffect(() => {
@@ -48,7 +37,6 @@ const PatientPage = () => {
         setTimeout(() => setErrorMessage(""), 3000);
       });
   };
-  console.log(entryForm);
   return (
     <div>
       <h2>
@@ -73,35 +61,7 @@ const PatientPage = () => {
         </Button>
       )}
       {showForm && (
-        <Paper elevation={3} sx={{ padding: 4, marginY: 2 }}>
-          <FormControl fullWidth>
-            <InputLabel id="entry-type">Select Entry Type</InputLabel>
-            <Select
-              labelId="entry-type"
-              value={entryForm}
-              label="Select Entry Type"
-              onChange={(e) => setEntryForm(e.target.value)}
-            >
-              <MenuItem value={"0"}>Add New HealthCheck Entry</MenuItem>
-              <MenuItem value={"1"}>Add New Hospital Entry</MenuItem>
-              <MenuItem value={"2"}>
-                Add New OccupationalHealthcare Entry
-              </MenuItem>
-            </Select>
-          </FormControl>
-          {entryForm === "0" && (
-            <HealthCheckForm setShowForm={setShowForm} addEntry={addEntry} />
-          )}
-          {entryForm === "1" && (
-            <HospitalForm setShowForm={setShowForm} addEntry={addEntry} />
-          )}
-          {entryForm === "2" && (
-            <OccupationalHealthcareForm
-              setShowForm={setShowForm}
-              addEntry={addEntry}
-            />
-          )}
-        </Paper>
+        <PatientEntryForm addEntry={addEntry} setShowForm={setShowForm} />
       )}
       <p style={{ fontWeight: "bold" }}>entries</p>
       <div>

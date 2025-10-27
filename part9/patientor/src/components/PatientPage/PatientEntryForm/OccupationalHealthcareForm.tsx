@@ -1,6 +1,29 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EntryFormValues } from "../../../types";
-import { Button, TextField } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  FormControl,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
+import diagnosisService from "../../../services/diagnoses";
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
 const OccupationalHealthcareForm = ({
   setShowForm,
@@ -12,27 +35,44 @@ const OccupationalHealthcareForm = ({
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
   const [description, setDescription] = useState("");
-  const [diagnosisCodes, setDiagnosisCodes] = useState("");
   const [employerName, setEmployerName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  const [diagnosisCodes, setDiagnosisCodes] = React.useState<string[]>([]);
+  const [codes, setCodes] = useState<string[]>([]);
+
+  useEffect(() => {
+    diagnosisService
+      .getAll()
+      .then((diagnoses) => setCodes(diagnoses.map((d) => d.code)));
+  });
+
+  const handleChange = (event: SelectChangeEvent<typeof diagnosisCodes>) => {
+    const {
+      target: { value },
+    } = event;
+    setDiagnosisCodes(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(",") : value,
+    );
+  };
+
   const createEntry = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    const diagnosisCodeArray = diagnosisCodes.split(",");
     const newEntry: EntryFormValues = {
       date,
       type: "OccupationalHealthcare",
       specialist,
       description,
       employerName,
-      sickLeave: {
+      diagnosisCodes,
+    };
+    if (startDate && endDate) {
+      newEntry.sickLeave = {
         startDate,
         endDate,
-      },
-    };
-    if (diagnosisCodeArray[0] !== "") {
-      newEntry.diagnosisCodes = diagnosisCodeArray;
+      };
     }
     addEntry(newEntry);
   };
@@ -43,9 +83,7 @@ const OccupationalHealthcareForm = ({
       <TextField
         variant="standard"
         fullWidth
-        label="Date"
-        size="small"
-        type="text"
+        type="date"
         value={date}
         onChange={(e) => setDate(e.target.value)}
       />
@@ -67,15 +105,29 @@ const OccupationalHealthcareForm = ({
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
-      <TextField
-        variant="standard"
-        fullWidth
-        label="DiagnosisCodes"
-        size="small"
-        type="text"
-        value={diagnosisCodes}
-        onChange={(e) => setDiagnosisCodes(e.target.value)}
-      />
+
+      <div>
+        <FormControl fullWidth sx={{ marginY: 1 }}>
+          <InputLabel id="diagnosis-codes-label">Diagnosis Codes</InputLabel>
+          <Select
+            labelId="diagnosis-codes-label"
+            id="demo-multiple-checkbox"
+            multiple
+            value={diagnosisCodes}
+            onChange={handleChange}
+            input={<OutlinedInput label="Diagnosis Codes" />}
+            renderValue={(selected) => selected.join(", ")}
+            MenuProps={MenuProps}
+          >
+            {codes.map((name) => (
+              <MenuItem key={name} value={name}>
+                <Checkbox checked={diagnosisCodes.includes(name)} />
+                <ListItemText primary={name} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
       <TextField
         variant="standard"
         fullWidth
@@ -88,18 +140,16 @@ const OccupationalHealthcareForm = ({
       <TextField
         variant="standard"
         fullWidth
-        label="Sick Leave Start Date"
-        size="small"
-        type="text"
+        type="date"
+        margin="dense"
         value={endDate}
         onChange={(e) => setEndDate(e.target.value)}
       />
       <TextField
         variant="standard"
         fullWidth
-        label="Sick Leave End Date"
-        size="small"
-        type="text"
+        margin="dense"
+        type="date"
         value={startDate}
         onChange={(e) => setStartDate(e.target.value)}
       />
