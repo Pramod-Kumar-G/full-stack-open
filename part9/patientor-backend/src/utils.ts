@@ -32,7 +32,7 @@ const HospitalSchema = z
       .optional(),
     type: z.literal("Hospital"),
     discharge: z.object({
-      date: z.string(),
+      date: z.iso.date(),
       criteria: z.string(),
     }),
   })
@@ -50,8 +50,8 @@ const OccupationalHealthcareSchema = z
     employerName: z.string(),
     sickLeave: z
       .object({
-        startDate: z.string(),
-        endDate: z.string(),
+        startDate: z.iso.date(),
+        endDate: z.iso.date(),
       })
       .optional(),
   })
